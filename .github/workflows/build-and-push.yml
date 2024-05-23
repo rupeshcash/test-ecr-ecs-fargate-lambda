@@ -13,8 +13,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Login to Amazon ECR
-      run: echo ${{ secrets.AWS_SECRET_ACCESS_KEY }} | docker login -u AWS --password-stdin test-ecr-fargate
+    - name: Configure AWS credentials
+      run: aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY && aws configure set region us-west-1
+
+    - name: Retrieve ECR login command
+      id: login-ecr
+      run: aws ecr get-login-password --region us-west-2 | docker login -u AWS --password-stdin test-ecr-fargate
 
     - name: Build Docker image
       run: docker build -t 992382632428.dkr.ecr.us-west-1.amazonaws.com/test-ecr-fargate .
