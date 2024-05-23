@@ -1,0 +1,23 @@
+name: Build and Push Docker Image to ECR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Login to Amazon ECR
+      run: echo ${{ secrets.AWS_SECRET_ACCESS_KEY }} | docker login -u AWS --password-stdin test-ecr-fargate
+
+    - name: Build Docker image
+      run: docker build -t 992382632428.dkr.ecr.us-west-1.amazonaws.com/test-ecr-fargate .
+
+    - name: Push Docker image to ECR
+      run: docker push 992382632428.dkr.ecr.us-west-1.amazonaws.com/test-ecr-fargate
